@@ -1,0 +1,29 @@
+# Essential Packages
+numpy
+pandas
+scipy
+scikit-learn
+matplotlib
+seaborn
+
+# Time Series Specific
+statsmodels
+pmdarima
+tsfresh
+
+# Machine Learning & Deep Learning
+xgboost
+lightgbm
+torch
+tensorflow
+prophet
+
+
+# MLOps & Automation
+mlflow
+dvc
+hydra-core
+
+# API (if needed)
+fastapi
+uvicorn

@@ -1,0 +1,104 @@
+{
+    "dataset_metadata": {
+        "total_columns": 3,
+        "total_rows": 230090,
+        "date_range": {
+            "start": "2010-01-01 00:00:00",
+            "end": "2018-12-31 00:00:00"
+        }
+    },
+    "preprocessing_recommendations": {
+        "stationarity": {
+            "store": {
+                "is_stationary": "False",
+                "p_value": 0.8681637347706433,
+                "transformation_needed": "YES"
+            },
+            "product": {
+                "is_stationary": "True",
+                "p_value": 0.0010492506930777606,
+                "transformation_needed": "NO"
+            },
+            "number_sold": {
+                "is_stationary": "True",
+                "p_value": 1.0689564216135569e-08,
+                "transformation_needed": "NO"
+            }
+        },
+        "feature_scaling": [
+            {
+                "column": "store",
+                "recommended_method": [
+                    "standardization",
+                    "min_max_scaling"
+                ]
+            },
+            {
+                "column": "product",
+                "recommended_method": [
+                    "standardization",
+                    "min_max_scaling"
+                ]
+            },
+            {
+                "column": "number_sold",
+                "recommended_method": [
+                    "standardization",
+                    "min_max_scaling"
+                ]
+            }
+        ],
+        "feature_engineering": [
+            {
+                "column": "store",
+                "suggested_transformations": [
+                    "log_transformation",
+                    "differencing",
+                    "rolling_mean_normalization"
+                ]
+            }
+        ]
+    },
+    "statistical_insights": {
+        "descriptive_stats": {
+            "store": {
+                "mean": 3.0,
+                "std": 2.0000043461395958,
+                "min": 0.0,
+                "max": 6.0
+            },
+            "product": {
+                "mean": 4.5,
+                "std": 2.872287564936809,
+                "min": 0.0,
+                "max": 9.0
+            },
+            "number_sold": {
+                "mean": 780.9261071754531,
+                "std": 204.09673676252908,
+                "min": 238.0,
+                "max": 1205.0
+            }
+        },
+        "correlations": {
+            "significant_correlations": [],
+            "correlation_matrix": {
+                "store": {
+                    "store": 1.0,
+                    "product": 6.6927644261625746e-15,
+                    "number_sold": 0.20199379787761526
+                },
+                "product": {
+                    "store": 6.6927644261625746e-15,
+                    "product": 1.0,
+                    "number_sold": 0.033123885576803326
+                },
+                "number_sold": {
+                    "store": 0.20199379787761526,
+                    "product": 0.033123885576803326,
+                    "number_sold": 1.0
+                }
+            }
+        }
+    }
+}

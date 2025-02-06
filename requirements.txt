@@ -24,6 +24,3 @@ mlflow
 dvc
 hydra-core
 
-# API (if needed)
-fastapi
-uvicorn

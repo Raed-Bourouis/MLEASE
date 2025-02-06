@@ -43,10 +43,10 @@ def preprocess_timeseries(df, report):
 
 # 
 if __name__ == "__main__":
-    eda_report = load_eda_report("mlops_eda_report.json")
+    eda_report = load_eda_report("../EDA/mlops_eda_report.json")
     
     # dataset (example)
-    df = pd.read_csv("./datasets/Month_Value_1.csv", index_col="Period", parse_dates=True)
+    df = pd.read_csv("../datasets/Month_Value_1.csv", index_col="Period", parse_dates=True)
     
     # preprocessing
     df_processed = preprocess_timeseries(df, eda_report)

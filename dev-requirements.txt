@@ -1,0 +1,12 @@
+jupyterlab
+notebook
+nbconvert
+mlflow
+torch
+tensorflow
+numpy
+pandas
+scipy
+scikit-learn
+matplotlib
+seaborn

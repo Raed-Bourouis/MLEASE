@@ -3,6 +3,7 @@ notebook
 nbconvert
 mlflow
 torch
+ydata_profiling
 tensorflow
 numpy
 pandas

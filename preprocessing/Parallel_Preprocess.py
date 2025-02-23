@@ -7,6 +7,7 @@ from concurrent.futures import ProcessPoolExecutor
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 
 
+
 def apply_transformations(df, column, transformations):
     """Applies randomly selected transformations to a column."""
     df = df.copy()

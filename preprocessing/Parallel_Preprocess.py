@@ -110,7 +110,7 @@ if __name__ == "__main__":
     eda_report = load_eda_report("../EDA/mlops_eda_report.json")
 
     # dataset (example)
-    df = pd.read_csv("../datasets/Month_Value_1.csv", index_col=0, parse_dates=True)
+    df = pd.read_csv("../datasets/Miles_Traveled.csv", index_col=0, parse_dates=True)
 
     # preprocessing
     experiment_results = run_parallel_experiments(df, eda_report, num_experiments=5)

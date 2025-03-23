@@ -68,17 +68,18 @@ class TimeSeriesPreprocessor:
         if df.isnull().sum().sum() == 0:
             logging.info("No missing values detected after EDA. Skipping handling.")
             return df
-
         logging.warning("Missing values detected. Selecting best imputation method.")
 
         # Create a copy of df to simulate additional missingness for validation.
         df_validation = df.copy()
         # This mask DataFrame will track the positions that are artificially set to NaN.
         mask = pd.DataFrame(False, index=df.index, columns=df.columns)
-
+        print(mask)
         # For each column, randomly mask a fraction of originally non-missing values.
         np.random.seed(random_state)
         for col in df.columns:
+            df[col] = pd.to_numeric(df[col], errors='coerce')
+            df_validation[col] = pd.to_numeric(df_validation[col], errors='coerce')
             non_missing_indices = df[df[col].notnull()].index
             n_to_mask = int(len(non_missing_indices) * validation_fraction)
             if n_to_mask > 0:
@@ -171,7 +172,7 @@ class TimeSeriesPreprocessor:
 
 if __name__ == "__main__":
     eda_report_path = "../EDA/mlops_eda_report.json"
-    df = pd.read_csv("../datasets/Month_Value_1.csv", index_col=0, parse_dates=True)
+    df = pd.read_csv("../datasets/Month_Value_2.csv", index_col=0, parse_dates=True)
     
     preprocessor = TimeSeriesPreprocessor(eda_report_path)
     df_processed = preprocessor.preprocess(df)

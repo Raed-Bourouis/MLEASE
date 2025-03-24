@@ -1,102 +1,110 @@
+from functools import lru_cache, reduce
 import numpy as np
 import pandas as pd
 import json
 import itertools
 import random
-from concurrent.futures import ProcessPoolExecutor
-from sklearn.preprocessing import StandardScaler, MinMaxScaler
+from scipy.stats import boxcox
 
+from concurrent.futures import ProcessPoolExecutor
+from sklearn.preprocessing import RobustScaler, StandardScaler, MinMaxScaler
+
+
+def handle_missing_values(df, method):
+    """Imputes missing values using different methods."""
+    imputed_dfs = {
+        "forward_fill": df.fillna(method="ffill"),
+        "backward_fill": df.fillna(method="bfill"),
+        "mean_imputation": df.fillna(df.select_dtypes(include=np.number).mean()),
+        "median_imputation": df.fillna(df.select_dtypes(include=np.number).median()),
+        "interpolation": df.interpolate(),
+    }
+    return imputed_dfs.get(method, df)
 
 
 def apply_transformations(df, column, transformations):
-    """Applies randomly selected transformations to a column."""
+    """Applies multiple transformations to a column."""
     df = df.copy()
 
     for transform in transformations:
         if transform == "differencing":
             df[column] = df[column].diff().fillna(df[column].iloc[0])
         elif transform == "log_transformation":
-            df[column] = np.log1p(df[column])
+            df[column] = np.log1p(df[column].clip(lower=1e-6))  # Avoid log(0)
         elif transform == "rolling_mean_normalization":
             df[column] = df[column] - df[column].rolling(window=3, min_periods=1).mean()
-
-    return df
-
-
-def apply_scaling(df, column, method):
-    """Applies scaling to a column."""
-    df = df.copy()
-    scaler = StandardScaler() if method == "standardization" else MinMaxScaler()
-    df[column] = scaler.fit_transform(df[[column]])
-    return df
-
-
-def preprocess_timeseries(df, report, transformation_choice, scaling_choice):
-    """Applies selected transformations and scaling method."""
-    df = df.copy()
-    column = report["preprocessing_recommendations"]["feature_engineering"][0]["column"]
-
-    # Apply chosen transformations
-    df = apply_transformations(df, column, transformation_choice)
-
-    # Apply chosen scaling
-    df = apply_scaling(df, column, scaling_choice)
-
-    return df
-
-
-def run_experiment(df, report, transformation_choice, scaling_choice, experiment_id):
-    """Runs a preprocessing variation."""
-    print(
-        f"Running Experiment {experiment_id} with {transformation_choice} and {scaling_choice}..."
-    )
-    processed_df = preprocess_timeseries(
-        df, report, transformation_choice, scaling_choice
-    )
-    return experiment_id, processed_df
-
-
-def run_parallel_experiments(df, report, num_experiments=4):
-    """Runs multiple preprocessing variations in parallel."""
-    results = {}
-
-    # Extract possible transformations and scaling methods
-    column = report["preprocessing_recommendations"]["feature_engineering"][0]["column"]
-    transformations = report["preprocessing_recommendations"]["feature_engineering"][0][
-        "suggested_transformations"
-    ]
-    scaling_methods = report["preprocessing_recommendations"]["feature_scaling"][0][
-        "recommended_method"
-    ]
-
-    # Generate different transformation combinations
-    transformation_combinations = list(
-        itertools.chain.from_iterable(
-            itertools.combinations(transformations, r)
-            for r in range(1, len(transformations) + 1)
-        )
-    )
-
-    # Select a few random preprocessing variations
-    chosen_variations = random.sample(
-        transformation_combinations,
-        min(len(transformation_combinations), num_experiments),
-    )
-    chosen_scalings = random.choices(scaling_methods, k=num_experiments)
-
-    with ProcessPoolExecutor() as executor:
-        futures = {
-            executor.submit(run_experiment, df, report, t_choice, s_choice, i): i
-            for i, (t_choice, s_choice) in enumerate(
-                zip(chosen_variations, chosen_scalings)
+        elif transform == "boxcox_transformation":
+            df[column] = pd.Series(
+                boxcox(df[column] - df[column].min() + 1e-6)[0], index=df[column].index
             )
-        }
 
-        for future in futures:
-            experiment_id, processed_df = future.result()
-            results[experiment_id] = processed_df
+    return df
 
-    return results
+
+def apply_scaling(df, column, methods):
+    """Applies scaling to a column using different methods."""
+    df = df.copy()
+    scalers = {
+        "standardization": StandardScaler(),
+        "min_max_scaling": MinMaxScaler(),
+        "robust_scaling": RobustScaler(),
+    }
+    for method in methods:
+        if method in scalers:
+            df[column] = scalers[method].fit_transform(df[column].values.reshape(-1, 1))
+    return df
+
+
+def preprocess_dataset(df, fill_method, recommendations):
+    """Preprocessing pipeline based on the given recommendations."""
+    # Handle missing values
+    df = handle_missing_values(
+        df, fill_method
+    )  # Adjust based on your preferred missing data method
+
+    # Apply stationarity transformation if needed
+    for column, stationarity in recommendations["stationarity"].items():
+        if stationarity["transformation_needed"] == "YES" and column in df.columns:
+            df = apply_transformations(
+                df, column, ["log_transformation", "differencing"]
+            )
+
+    # Apply feature engineering transformations
+    for transformation_info in recommendations["feature_engineering"]:
+
+        df = apply_transformations(
+            df,
+            transformation_info["column"],
+            transformation_info["suggested_transformations"],
+        )
+
+    # Apply feature scaling
+    for scale_info in recommendations["feature_scaling"]:
+        column = scale_info["column"]
+        if column in df.columns:
+            df = apply_scaling(df, column, scale_info["recommended_method"])
+
+    return df
+
+
+def generate_preprocessed_datasets(df, recommendations, n_jobs=-1):
+    """Generates multiple preprocessed versions of the dataset using ProcessPoolExecutor."""
+    fill_methods = [
+        "forward_fill",
+        "backward_fill",
+        "mean_imputation",
+        "median_imputation",
+        "interpolation",
+    ]
+    tasks = []
+    with ProcessPoolExecutor() as executor:
+        for fill_method in fill_methods:
+            tasks.append(
+                executor.submit(preprocess_dataset, df, fill_method, recommendations)
+            )
+    # Collect results from all tasks
+    preprocessed_dfs = [task.result() for task in tasks]
+    return preprocessed_dfs
 
 
 # JSON Report generated by EDA
@@ -110,16 +118,18 @@ if __name__ == "__main__":
     eda_report = load_eda_report("../EDA/mlops_eda_report.json")
 
     # dataset (example)
-    df = pd.read_csv("../datasets/Miles_Traveled.csv", index_col=0, parse_dates=True)
+    df = pd.read_csv("../datasets/Month_Value_2.csv", index_col=0, parse_dates=True)
+    for col in df.columns:
+        df[col] = pd.to_numeric(df[col], errors="coerce")
 
     # preprocessing
-    experiment_results = run_parallel_experiments(df, eda_report, num_experiments=5)
-    for exp_id, processed_df in experiment_results.items():
-        print(f"Experiment {exp_id} processed data:")
-        # print(processed_df.head())
-        processed_df.to_csv(f"output/preprocessed_timeseries{exp_id}.csv")
+    processed_datasets = generate_preprocessed_datasets(
+        df, eda_report["preprocessing_recommendations"]
+    )
 
-    # Sauvegarder le dataset preprocessé
+    # Print sample outputs
+    for i, dataset in enumerate(processed_datasets):
+        print(f"Experiment {i} processed data:")
+        dataset.to_csv(f"output/preprocessed_timeseries{i}.csv")
+
     print("Preprocessing finished. Data saved.")
-    print(experiment_results.keys())
-

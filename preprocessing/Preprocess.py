@@ -28,16 +28,16 @@ def preprocess_timeseries(df, report):
             df[column] = df[column].diff(periods=12).fillna(df[column].iloc[0])
 
     # scaling recommandation
-    for entry in report["preprocessing_recommendations"]["feature_scaling"]:
-        column = entry["column"]
-        methods = entry["recommended_method"]
+    # for entry in report["preprocessing_recommendations"]["feature_scaling"]:
+    #     column = entry["column"]
+    #     methods = entry["recommended_method"]
         
-        if "standardization" in methods:
-            scaler = StandardScaler()
-            df[column] = scaler.fit_transform(df[[column]])
-        elif "min_max_scaling" in methods:
-            scaler = MinMaxScaler()
-            df[column] = scaler.fit_transform(df[[column]])
+    #     if "standardization" in methods:
+    #         scaler = StandardScaler()
+    #         df[column] = scaler.fit_transform(df[[column]])
+    #     elif "min_max_scaling" in methods:
+    #         scaler = MinMaxScaler()
+    #         df[column] = scaler.fit_transform(df[[column]])
     
     return df
 
@@ -46,7 +46,7 @@ if __name__ == "__main__":
     eda_report = load_eda_report("../EDA/mlops_eda_report.json")
     
     # dataset (example)
-    df = pd.read_csv("../datasets/Miles_Traveled.csv", index_col=0, parse_dates=True)
+    df = pd.read_csv("../datasets/Month_Value_1.csv", index_col=0, parse_dates=True)
     
     # preprocessing
     df_processed = preprocess_timeseries(df, eda_report)

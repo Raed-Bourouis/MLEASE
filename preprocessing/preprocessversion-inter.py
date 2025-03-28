@@ -139,7 +139,7 @@ class TimeSeriesPreprocessor:
         """Applies the recommended scaling method."""
         recommended_methods = self.eda_report["preprocessing_recommendations"]["feature_scaling"][0]["recommended_method"]
         scalers = {"standardization": StandardScaler(), "min_max_scaling": MinMaxScaler(), "robust_scaling": RobustScaler()}
-        
+        return df   #TODO: SCALING IS APPLIED AFTER TRAIN TEST SPLITTING !!!
         for method in recommended_methods:
             if method in scalers:
                 logging.info(f"Using recommended scaling: {method}")
@@ -165,14 +165,14 @@ class TimeSeriesPreprocessor:
         )
         
         df = pd.DataFrame(dict(zip(df.columns, results)), index=df.index)
-        df = self._scale_data(df)
+        # df = self._scale_data(df)
         
         logging.info(f"Preprocessing completed in {time.time() - start_time:.2f} seconds. Memory usage: {psutil.virtual_memory().percent}%")
         return df
 
 if __name__ == "__main__":
     eda_report_path = "../EDA/mlops_eda_report.json"
-    df = pd.read_csv("../datasets/Month_Value_2.csv", index_col=0, parse_dates=True)
+    df = pd.read_csv("../datasets/Month_Value_1.csv", index_col=0, parse_dates=True)
     
     preprocessor = TimeSeriesPreprocessor(eda_report_path)
     df_processed = preprocessor.preprocess(df)

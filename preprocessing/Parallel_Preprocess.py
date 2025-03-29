@@ -79,10 +79,10 @@ def preprocess_dataset(df, fill_method, recommendations):
         )
 
     # Apply feature scaling
-    for scale_info in recommendations["feature_scaling"]:
-        column = scale_info["column"]
-        if column in df.columns:
-            df = apply_scaling(df, column, scale_info["recommended_method"])
+    # for scale_info in recommendations["feature_scaling"]:
+    #     column = scale_info["column"]
+    #     if column in df.columns:
+    #         df = apply_scaling(df, column, scale_info["recommended_method"])
 
     return df
 

@@ -172,7 +172,7 @@ class TimeSeriesPreprocessor:
 
 if __name__ == "__main__":
     eda_report_path = "../EDA/mlops_eda_report.json"
-    df = pd.read_csv("../datasets/Month_Value_1.csv", index_col=0, parse_dates=True)
+    df = pd.read_csv("../datasets/Miles_Traveled.csv", index_col=0, parse_dates=True)
     
     preprocessor = TimeSeriesPreprocessor(eda_report_path)
     df_processed = preprocessor.preprocess(df)

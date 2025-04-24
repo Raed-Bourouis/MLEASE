@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/salou/OneDrive/Documents/GitHub/MLEASE/MLFLOW/mlruns/492210989808195591/ce05c74e27464a95a3408d7a2e0eae5a/artifacts
+end_time: 1745457694968
+entry_point_name: ''
+experiment_id: '492210989808195591'
+lifecycle_stage: active
+run_id: ce05c74e27464a95a3408d7a2e0eae5a
+run_name: dashing-fowl-484
+run_uuid: ce05c74e27464a95a3408d7a2e0eae5a
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1745457688379
+status: 3
+tags: []
+user_id: salou

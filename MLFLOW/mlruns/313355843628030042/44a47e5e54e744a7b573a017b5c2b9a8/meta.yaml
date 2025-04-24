@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/salou/OneDrive/Documents/GitHub/MLEASE/MLFLOW/mlruns/313355843628030042/44a47e5e54e744a7b573a017b5c2b9a8/artifacts
+end_time: 1745458837237
+entry_point_name: ''
+experiment_id: '313355843628030042'
+lifecycle_stage: active
+run_id: 44a47e5e54e744a7b573a017b5c2b9a8
+run_name: placid-fawn-799
+run_uuid: 44a47e5e54e744a7b573a017b5c2b9a8
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1745458836536
+status: 4
+tags: []
+user_id: salou

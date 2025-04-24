@@ -1,0 +1,56 @@
+{
+    "dataset_metadata": {
+        "total_columns": 1,
+        "total_rows": 324,
+        "date_range": {
+            "start": "1992-01-01 00:00:00",
+            "end": "2018-12-01 00:00:00"
+        }
+    },
+    "preprocessing_recommendations": {
+        "stationarity": {
+            "beer": {
+                "is_stationary": "False",
+                "p_value": 1.0,
+                "transformation_needed": "YES"
+            }
+        },
+        "feature_scaling": [
+            {
+                "column": "beer",
+                "recommended_method": [
+                    "standardization",
+                    "min_max_scaling"
+                ]
+            }
+        ],
+        "feature_engineering": [
+            {
+                "column": "beer",
+                "suggested_transformations": [
+                    "log_transformation",
+                    "differencing",
+                    "rolling_mean_normalization"
+                ]
+            }
+        ]
+    },
+    "statistical_insights": {
+        "descriptive_stats": {
+            "beer": {
+                "mean": 2972.895061728395,
+                "std": 1010.21857432005,
+                "min": 1501.0,
+                "max": 6370.0
+            }
+        },
+        "correlations": {
+            "significant_correlations": [],
+            "correlation_matrix": {
+                "beer": {
+                    "beer": 1.0
+                }
+            }
+        }
+    }
+}

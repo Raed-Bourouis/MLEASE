@@ -1,0 +1,19 @@
+# Time Series Specific
+statsmodels
+pmdarima
+tsfresh
+
+# Machine Learning & Deep Learning
+xgboost
+lightgbm
+prophet
+pmdarima
+
+
+# MLOps & Automation
+hydra-core
+dvc
+mlflow
+
+#Orchestration 
+prefect

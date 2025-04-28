@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+    ports:
+      - "8888:8888"
+    environment:
+      - JUPYTER_ENABLE_LAB=yes
+    networks:
+      - mlease-net
+
+  prefect-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.prefect
+    command: prefect orion start --host 0.0.0.0 --port 4200
+    ports:
+      - "4200:4200"
+    volumes:
+      - ./Flows:/app/Flows
+      - ./MLFLOW:/app/MLFLOW
+      - ./mlease-backend/uploads:/app/uploads
+    environment:
+      - PREFECT_ORION_DATABASE_CONNECTION_URL=sqlite:////root/.prefect/orion.db
+      - MLFLOW_TRACKING_URI=http://mlflow-server:5000
+    networks:
+      - mlease-net
+    restart: unless-stopped
+
+  mlflow-server:
+    image: python:3.10-slim
+    command: >
+      sh -c "pip install mlflow &&
+             mlflow server 
+             --host 0.0.0.0 
+             --port 5000 
+             --backend-store-uri file:///mlflow_data/mlruns 
+             --default-artifact-root=file:///mlflow_data/artifacts"
+    ports:
+      - "5000:5000"
+    volumes:
+      - mlflow_data:/mlflow_data
+    environment:
+      - ARTIFACT_ROOT=/mlflow_data/artifacts
+    networks:
+      - mlease-net
+    restart: unless-stopped
+
+  flask-api:
+    build:
+      context: .
+      dockerfile: Dockerfile.flask
+    ports:
+      - "8000:8000"
+    environment:
+      - PREFECT_API_URL=http://prefect-server:4200/api
+      - MLFLOW_TRACKING_URL=http://mlflow-server:5000
+    volumes:
+      - ./mlease-backend/uploads:/app/uploads
+    depends_on:
+      - prefect-server
+      - mlflow-server
+    networks:
+      - mlease-net
+    restart: unless-stopped
+
+volumes:
+  mlflow_data:
+
+networks:
+  mlease-net:
+    driver: bridge

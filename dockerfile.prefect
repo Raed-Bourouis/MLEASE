@@ -1,0 +1,27 @@
+FROM prefecthq/prefect:2-python3.10
+
+# Install system dependencies needed
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    libgomp1 \
+    build-essential \
+    libffi-dev \
+    libssl-dev \
+    libxml2-dev \
+    libjpeg-dev \
+    libblas-dev \
+    liblapack-dev \
+    gfortran \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy the requirements.txt
+COPY requirements.txt .
+
+# Install your dependencies
+RUN pip install --upgrade pip && pip install -r requirements.txt
+
+WORKDIR /app
+
+# Start with Bash by default (Prefect server started in docker-compose.yml)
+CMD ["bash"]

@@ -1,0 +1,15 @@
+FROM python:3.11-slim
+
+# Copy the requirements.txt
+COPY requirements.txt .
+
+# Install only Flask and small dependencies
+RUN pip install --upgrade pip && pip install -r requirements.txt
+
+WORKDIR /app
+
+# Copy Flask app (you'll put your app.py inside flask/)
+COPY flask/ /app/
+
+# Start Flask app
+CMD ["python", "app.py"]

@@ -1,5 +1,3 @@
-# Flows/full_pipeline_flow.py
-
 from prefect import flow, task
 import mlflow
 
@@ -42,7 +40,7 @@ def train_selected_model(selected_model_info, dataset_path, target_column):
         models = selected_model_info.split(":")[1].split("+")
         print(f"Training ensemble models: {models}")
 
-        trained_models = []  # Track models that we trained
+        trained_models = []  # To Track models that we trained
 
         for model in models:
             model = model.lower()
@@ -61,7 +59,7 @@ def train_selected_model(selected_model_info, dataset_path, target_column):
             else:
                 raise ValueError(f"Unknown model {model}")
 
-        # ✅ After training exactly these two models, combine their predictions
+        # After training exactly these two models, combine their predictions
         combine_ensemble_predictions(trained_models)
 
     else:
@@ -86,13 +84,13 @@ def full_pipeline_flow(dataset_path: str, target_column: str):
     selected_model_info = empirical_model_scoring(preprocessed_path)
     train_selected_model(selected_model_info, preprocessed_path, target_column)
 
-    print("✅ Full pipeline finished successfully.")
+    print("Full pipeline finished successfully.")
 
     mlflow.log_param("Pipeline Status", "Completed")
     mlflow.log_param("Selected Model", selected_model_info)
 
 if __name__ == "__main__":
     full_pipeline_flow(
-        dataset_path="../datasets/preprocessed_data.csv",
+        dataset_path="../datasets/Alcohol_sales.csv",
         target_column="sales"
     )

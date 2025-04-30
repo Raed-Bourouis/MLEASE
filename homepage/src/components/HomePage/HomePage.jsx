@@ -1,14 +1,21 @@
-import { ChevronRight, Code, BarChart2, RefreshCw, Shield } from "lucide-react";
-
-import { useState } from "react";
+import { Code, RefreshCw, Shield, BarChart3, Pointer } from "lucide-react";
+import React, { useState } from "react";
 import Navbar from "./Navbar";
+
 import AIphoto from "../../assets/background_ai.png";
+import mlease_logo from "../../assets/logo.svg";
+import RotatingFront from "../../assets/rotating-card-bg-front.jpeg";
+import RotatingBack from "../../assets/rotating-card-bg-back.jpeg";
+import { motion } from "framer-motion";
 
 const HomePage = () => {
   return (
     <>
       <Navbar />
       <MLeaseLanding />
+      <HeroSection />
+      <FeaturesSection />
+      <PageShowcase />
     </>
   );
 };
@@ -17,8 +24,20 @@ export default HomePage;
 
 function MLeaseLanding() {
   return (
-    <div className="bg-linear-135 from-[#FD9D65] to-[#FFB88C] w-full min-h-screen flex items-center justify-center p-6">
-      <div className="max-w-6xl w-full flex flex-col md:flex-row items-center justify-between gap-8">
+    <div className="relative  bg-gradient-to-br from-[#FD9D65] to-[#FFB88C] w-full h-main  flex items-center justify-center p-6 overflow-hidden">
+      <svg
+        className="absolute top-0 left-0 w-full h-full z-0 opacity-35"
+        viewBox="0 0 1440 320"
+        preserveAspectRatio="none"
+      >
+        <path
+          fill="#ffffff"
+          fillOpacity="0.3"
+          d="M0,160L60,154.7C120,149,240,139,360,160C480,181,600,235,720,250.7C840,267,960,245,1080,229.3C1200,213,1320,203,1380,197.3L1440,192L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"
+        ></path>
+      </svg>
+
+      <div className="relative z-10 max-w-6xl w-full flex flex-col md:flex-row items-center justify-between gap-8">
         <div className="space-y-6 max-w-lg">
           <h1 className="text-5xl font-bold text-white drop-shadow-md">
             Getting Started with MLEASE!
@@ -40,338 +59,271 @@ function MLeaseLanding() {
   );
 }
 
-function MLeasePage() {
-  const [showScrollButton, setShowScrollButton] = useState(false);
+function HeroSection() {
+  return (
+    <div className="flex flex-col lg:flex-row items-center justify-around w-full h-main bg-white py-16 px-4 sm:px-6 lg:px-8">
+      {/* Left side: Text content */}
+      <div className="max-w-xl mb-10 lg:mb-0">
+        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+          Simplify AI Operations with MLease
+        </h1>
+        <div className="mb-8">
+          <span className="font-semibold text-gray-700">MLEASE </span>
+          <p className="text-gray-600 mt-2 inline">
+            empowers users at all enterprise levels to manage, monitor, and
+            operationalize ML models effortlessly. With intelligent automation,
+            robust monitoring, and accessible tools, MLease bridges the gap
+            between advanced AI technologies and practical, everyday
+            implementation.
+          </p>
+        </div>
+        <button className="bg-orange-300 hover:bg-orange-400 text-white py-2 px-6 rounded-md cursor-pointer transition-colors">
+          Get Started →
+        </button>
+      </div>
 
-  // Show scroll button when user scrolls down
-  if (typeof window !== "undefined") {
-    window.addEventListener("scroll", () => {
-      if (window.scrollY > 300) {
-        setShowScrollButton(true);
-      } else {
-        setShowScrollButton(false);
-      }
-    });
-  }
+      {/* Right side: Logo */}
+      <div className="bg-white p-8 rounded-lg shadow-lg">
+        <img src={mlease_logo} alt="MLease Logo" className="w-64 h-auto" />
+      </div>
+    </div>
+  );
+}
 
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+function FeaturesSection() {
+  // State to track which card is flipped
+  const [flippedCard, setFlippedCard] = useState(false);
+
+  // Features data
+  const features = [
+    {
+      id: "integration",
+      icon: <Code className="w-6 h-6 text-blue-500" />,
+      title: "Seamless Integration",
+      description:
+        "Connect and automate your ML workflows effortlessly with robust APIs and an intuitive dashboard.",
+    },
+    {
+      id: "analytics",
+      icon: <BarChart3 className="w-6 h-6 text-blue-500" />,
+      title: "Real-time Analytics",
+      description:
+        "Monitor your model performance live and make informed adjustments on the fly.",
+    },
+    {
+      id: "pipelines",
+      icon: <RefreshCw className="w-6 h-6 text-blue-500" />,
+      title: "Automated Pipelines",
+      description:
+        "Accelerate your deployment with end-to-end automation that takes your models from training to production seamlessly.",
+    },
+    {
+      id: "security",
+      icon: <Shield className="w-6 h-6 text-blue-500" />,
+      title: "Enterprise-Grade Security",
+      description:
+        "Safeguard your data and models with advanced encryption and comprehensive security features.",
+    },
+  ];
 
   return (
-    <div className="min-h-screen bg-white font-sans">
-      {/* Top Navigation Bar */}
-
-      {/* Hero Section */}
-      <section className="bg-orange-300 py-12 md:py-24 px-6 md:px-12 lg:px-24">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
-          <div>
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-6 drop-shadow-sm">
-              Getting Started with MLEASE!
-            </h1>
-            <p className="text-lg text-gray-700 mb-8">
-              MLEASE is an MLOps-driven platform that simplifies and
-              democratizes machine learning model deployment.
-            </p>
-            <a
-              href="#"
-              className="inline-block bg-blue-500 text-white px-6 py-3 rounded-md hover:bg-blue-600 transition-colors flex items-center"
+    <div className="w-full bg-white py-16 px-4 h-main sm:px-6 lg:px-8 flex flex-col lg:flex-row items-center gap-x-24 justify-center">
+      {/* Left side: Rotating cards */}
+      <div className=" h-[65dvh] w-[50dvh] flex justify-center items-center p-0  rounded-2xl">
+        <div className="group [perspective:1000px] h-full w-full  rounded-2xl">
+          <div className="relative  rounded-2xl w-full h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
+            {/* Front Side */}
+            <div
+              style={{ backgroundImage: `url(${RotatingFront})` }}
+              className="absolute inset-0 text-white rounded-2xl shadow-xl flex flex-col justify-center bg-cover bg-center items-center [backface-visibility:hidden]"
             >
-              Get Started Free <ChevronRight className="w-4 h-4 ml-1" />
-            </a>
-          </div>
-          <div className="flex justify-center">
-            <div className="bg-white p-6 rounded-lg shadow-lg">
-              <div className="text-orange-500">
-                <svg viewBox="0 0 200 200" fill="none" className="w-64 h-64">
-                  <path
-                    d="M100 40C80 40 70 50 70 70C70 90 80 100 100 100C120 100 130 90 130 70C130 50 120 40 100 40Z"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  />
-                  <path
-                    d="M60 160C60 140 80 120 100 120C120 120 140 140 140 160"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  />
-                  <circle cx="100" cy="85" r="10" fill="currentColor" />
-                  <path
-                    d="M85 110C85 105 95 105 95 105H105C105 105 115 105 115 110"
-                    stroke="currentColor"
-                    strokeWidth="3"
-                  />
-                  <path
-                    d="M40 70L20 70M160 70L180 70M40 100L10 100M160 100L190 100M40 130L20 130M160 130L180 130"
-                    stroke="currentColor"
-                    strokeWidth="3"
-                  />
-                  <rect
-                    x="80"
-                    y="45"
-                    width="40"
-                    height="30"
-                    rx="5"
-                    stroke="currentColor"
-                    strokeWidth="3"
-                  />
-                  <text
-                    x="100"
-                    y="65"
-                    textAnchor="middle"
-                    fill="currentColor"
-                    fontSize="16"
-                  >
-                    AI
-                  </text>
-                </svg>
+              <div className="absolute inset-0 bg-[linear-gradient(195deg,rgba(73,163,241,0.85),rgba(73,163,241,0.85))]  rounded-2xl  z-0" />
+              <div className="w-full h-full flex justify-center relative  items-center flex-col">
+                <Pointer className="mb-16" size={50} />
+                <h2 className="text-2xl font-bold">Experience MLease</h2>
+                <p className="mt-2 text-center px-6">
+                  Streamline your ML pipeline with a unified platform designed
+                  for efficient model deployment.
+                </p>
+              </div>
+            </div>
+
+            {/* Back Side */}
+            <div
+              style={{ backgroundImage: `url(${RotatingBack})` }}
+              className="absolute inset-0 text-white rounded-2xl shadow-xl flex flex-col justify-center items-center [transform:rotateY(180deg)] bg-cover bg-center [backface-visibility:hidden]"
+            >
+              <div className="absolute inset-0  bg-[linear-gradient(195deg,rgba(73,163,241,0.85),rgba(73,163,241,0.85))] rounded-2xl z-0" />
+              <div className="w-full h-full flex justify-center relative items-center flex-col">
+                <h2 className="text-2xl font-bold">Discover MLease</h2>
+                <p className="mt-2 text-center px-6">
+                  Dive into our intuitive dashboard, access real-time analytics,
+                  and unlock end-to-end automation for your ML models.
+                </p>
+                <button className="mt-6 px-4 py-2 bg-white text-blue-600 font-semibold rounded-xl shadow hover:bg-gray-100 transition">
+                  Explore Features
+                </button>
               </div>
             </div>
           </div>
         </div>
-      </section>
-
-      {/* Second Section */}
-      <section className="py-16 px-6 md:px-12 lg:px-24">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
-          <div>
-            <h2 className="text-3xl font-bold text-gray-800 mb-6">
-              Simplify AI Operations with MLease
-            </h2>
-            <p className="text-gray-600 mb-8">
-              MLease empowers users at all enterprise levels to manage, monitor,
-              and operationalize ML models effortlessly. With intelligent
-              automation, robust monitoring, and accessible tools, MLease
-              bridges the gap between advanced AI technologies and practical,
-              everyday implementation.
-            </p>
-            <a
-              href="#"
-              className="inline-block bg-orange-300 text-gray-700 px-6 py-3 rounded-md hover:bg-orange-400 transition-colors flex items-center"
-            >
-              Get Started <ChevronRight className="w-4 h-4 ml-1" />
-            </a>
+      </div>
+      {/* Right side: Features grid */}
+      <div className="w-1/2 lg:w-1/2 grid md:grid-cols-2 gap-x-8 gap-y-12">
+        {features.map((feature) => (
+          <div key={feature.id} className="flex flex-col  text-lg">
+            <div className="mb-4 bg-blue-100 w-10 h-10 rounded  flex items-center justify-center">
+              {feature.icon}
+            </div>
+            <h3 className="text-2xl font-bold  text-gray-800 mb-2">
+              {feature.title}
+            </h3>
+            <p className="text-gray-600">{feature.description}</p>
           </div>
-          <div className="flex justify-center">
-            <div className="bg-white p-6 rounded-lg shadow-lg">
-              <svg
-                viewBox="0 0 200 100"
-                fill="none"
-                className="w-full h-auto text-orange-500"
-              >
-                <path
-                  d="M50 50C50 30 40 20 20 20C10 20 5 30 5 40C5 50 10 60 20 60C40 60 50 50 50 30"
-                  stroke="currentColor"
-                  strokeWidth="3"
-                />
-                <path
-                  d="M150 50C150 30 160 20 180 20C190 20 195 30 195 40C195 50 190 60 180 60C160 60 150 50 150 30"
-                  stroke="currentColor"
-                  strokeWidth="3"
-                />
-                <circle
-                  cx="100"
-                  cy="50"
-                  r="30"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                  fill="none"
-                />
-                <text
-                  x="100"
-                  y="55"
-                  textAnchor="middle"
-                  fill="currentColor"
-                  fontSize="12"
-                  fontWeight="bold"
-                >
-                  MLEASE
-                </text>
-              </svg>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function PageShowcase({
+  // You can import and pass these images as props
+  aboutUsImage,
+  contactUsImage,
+  signInImage,
+  authorImage,
+}) {
+  return (
+    <div className="w-full bg-white py-16 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex flex-col lg:flex-row items-start justify-between gap-12">
+          {/* Left side: Grid of page previews */}
+          <div className="w-full lg:w-3/5 grid md:grid-cols-2 gap-6">
+            {/* About Us Page */}
+            <div className="flex flex-col">
+              <div className="shadow-lg rounded-lg overflow-hidden mb-3 hover:shadow-xl transition-shadow">
+                {aboutUsImage ? (
+                  <img
+                    src={aboutUsImage}
+                    alt="About Us Page Preview"
+                    className="w-full"
+                  />
+                ) : (
+                  <div className="bg-gray-200 w-full h-64 flex items-center justify-center">
+                    <span className="text-gray-500">About Us Image</span>
+                  </div>
+                )}
+              </div>
+              <h3 className="text-lg font-medium text-gray-800">
+                About Us Page
+              </h3>
+            </div>
+
+            {/* Contact Us Page */}
+            <div className="flex flex-col">
+              <div className="shadow-lg rounded-lg overflow-hidden mb-3 hover:shadow-xl transition-shadow">
+                {contactUsImage ? (
+                  <img
+                    src={contactUsImage}
+                    alt="Contact Us Page Preview"
+                    className="w-full"
+                  />
+                ) : (
+                  <div className="bg-gray-200 w-full h-64 flex items-center justify-center">
+                    <span className="text-gray-500">Contact Us Image</span>
+                  </div>
+                )}
+              </div>
+              <h3 className="text-lg font-medium text-gray-800">
+                Contact Us Page
+              </h3>
+            </div>
+
+            {/* Sign In Page */}
+            <div className="flex flex-col">
+              <div className="shadow-lg rounded-lg overflow-hidden mb-3 hover:shadow-xl transition-shadow">
+                {signInImage ? (
+                  <img
+                    src={signInImage}
+                    alt="Sign In Page Preview"
+                    className="w-full"
+                  />
+                ) : (
+                  <div className="bg-gray-200 w-full h-64 flex items-center justify-center">
+                    <span className="text-gray-500">Sign In Image</span>
+                  </div>
+                )}
+              </div>
+              <h3 className="text-lg font-medium text-gray-800">
+                Sign In Page
+              </h3>
+            </div>
+
+            {/* Author Page */}
+            <div className="flex flex-col">
+              <div className="shadow-lg rounded-lg overflow-hidden mb-3 hover:shadow-xl transition-shadow">
+                {authorImage ? (
+                  <img
+                    src={authorImage}
+                    alt="Author Page Preview"
+                    className="w-full"
+                  />
+                ) : (
+                  <div className="bg-gray-200 w-full h-64 flex items-center justify-center">
+                    <span className="text-gray-500">Author Image</span>
+                  </div>
+                )}
+              </div>
+              <h3 className="text-lg font-medium text-gray-800">Author Page</h3>
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* Features Section */}
-      <section className="py-16 px-6 md:px-12 lg:px-24 bg-gray-50">
-        <div className="grid md:grid-cols-3 gap-8">
-          <div className="bg-blue-500 p-8 rounded-lg text-white text-center">
-            <h3 className="text-3xl font-bold mb-4">Experience MLease</h3>
-            <p className="mb-4">
+          {/* Right side: Description */}
+          <div className="w-full lg:w-2/5 h-[70dvh] flex flex-col justify-center">
+            <h2 className="text-4xl font-bold text-gray-800 mb-6">
+              Empowering MLOps, Simplified
+            </h2>
+            <p className="text-gray-600 text-lg">
+              MLease empowers users of all expertise levels to manage, monitor,
+              and operationalize ML models effectively with automation,
+              end-to-end support, and accessible tools—bridging the gap between
+              advanced ML technologies and practical implementation.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const FlipCard = () => {
+  return (
+    <div className="w-full flex justify-center items-center p-4">
+      <div className="group [perspective:1000px]">
+        <div className="relative w-80 h-96 transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
+          {/* Front Side */}
+          <div className="absolute inset-0 bg-blue-500 text-white rounded-2xl shadow-xl flex flex-col justify-center items-center [backface-visibility:hidden]">
+            <div className="text-5xl mb-4">🖱️</div>
+            <h2 className="text-2xl font-bold">Experience MLease</h2>
+            <p className="mt-2 text-center px-6">
               Streamline your ML pipeline with a unified platform designed for
               efficient model deployment.
             </p>
           </div>
 
-          <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="bg-white p-6 rounded-lg shadow">
-              <div className="text-blue-500 mb-4">
-                <Code className="w-8 h-8" />
-              </div>
-              <h3 className="text-xl font-bold mb-2 text-gray-800">
-                Seamless Integration
-              </h3>
-              <p className="text-gray-600">
-                Connect and automate your ML workflows effortlessly with robust
-                APIs and an intuitive dashboard.
-              </p>
-            </div>
-
-            <div className="bg-white p-6 rounded-lg shadow">
-              <div className="text-blue-500 mb-4">
-                <BarChart2 className="w-8 h-8" />
-              </div>
-              <h3 className="text-xl font-bold mb-2 text-gray-800">
-                Real-time Analytics
-              </h3>
-              <p className="text-gray-600">
-                Monitor your model performance live and make informed
-                adjustments on the fly.
-              </p>
-            </div>
-
-            <div className="bg-white p-6 rounded-lg shadow">
-              <div className="text-blue-500 mb-4">
-                <RefreshCw className="w-8 h-8" />
-              </div>
-              <h3 className="text-xl font-bold mb-2 text-gray-800">
-                Automated Pipelines
-              </h3>
-              <p className="text-gray-600">
-                Accelerate your deployment with end-to-end automation that takes
-                your models from training to production seamlessly.
-              </p>
-            </div>
-
-            <div className="bg-white p-6 rounded-lg shadow">
-              <div className="text-blue-500 mb-4">
-                <Shield className="w-8 h-8" />
-              </div>
-              <h3 className="text-xl font-bold mb-2 text-gray-800">
-                Enterprise-Grade Security
-              </h3>
-              <p className="text-gray-600">
-                Safeguard your data and models with advanced encryption and
-                comprehensive security features.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Call to Action */}
-      <section className="py-12 bg-orange-300 px-6 md:px-12 lg:px-24">
-        <div className="text-center">
-          <h2 className="text-3xl font-bold text-white mb-6">
-            Ready to Simplify Your ML Operations?
-          </h2>
-          <a
-            href="#"
-            className="inline-block bg-blue-500 text-white px-8 py-3 rounded-md hover:bg-blue-600 transition-colors"
-          >
-            Get Started Free
-          </a>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="bg-gray-800 text-white py-12 px-6 md:px-12 lg:px-24">
-        <div className="grid md:grid-cols-4 gap-8">
-          <div>
-            <h3 className="text-xl font-bold mb-4">MLease</h3>
-            <p className="text-gray-400">
-              Simplifying machine learning operations for enterprises of all
-              sizes.
+          {/* Back Side */}
+          <div className="absolute inset-0 bg-blue-600 text-white rounded-2xl shadow-xl flex flex-col justify-center items-center [transform:rotateY(180deg)] [backface-visibility:hidden]">
+            <h2 className="text-2xl font-bold">Discover MLease</h2>
+            <p className="mt-2 text-center px-6">
+              Dive into our intuitive dashboard, access real-time analytics, and
+              unlock end-to-end automation for your ML models.
             </p>
-          </div>
-          <div>
-            <h4 className="font-bold mb-4">Products</h4>
-            <ul className="space-y-2 text-gray-400">
-              <li>
-                <a href="#" className="hover:text-white">
-                  MLease Platform
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white">
-                  MLease Enterprise
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white">
-                  MLease Cloud
-                </a>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-bold mb-4">Resources</h4>
-            <ul className="space-y-2 text-gray-400">
-              <li>
-                <a href="#" className="hover:text-white">
-                  Documentation
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white">
-                  Blog
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white">
-                  Case Studies
-                </a>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-bold mb-4">Company</h4>
-            <ul className="space-y-2 text-gray-400">
-              <li>
-                <a href="#" className="hover:text-white">
-                  About Us
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white">
-                  Careers
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white">
-                  Contact
-                </a>
-              </li>
-            </ul>
+            <button className="mt-6 px-4 py-2 bg-white text-blue-600 font-semibold rounded-xl shadow hover:bg-gray-100 transition">
+              Explore Features
+            </button>
           </div>
         </div>
-        <div className="border-t border-gray-700 mt-8 pt-8 text-gray-400 text-center">
-          <p>&copy; 2025 MLease. All rights reserved.</p>
-        </div>
-      </footer>
-
-      {/* Scroll to top button */}
-      {showScrollButton && (
-        <button
-          onClick={scrollToTop}
-          className="fixed bottom-6 right-6 bg-orange-400 text-white p-3 rounded-full shadow-lg hover:bg-orange-500 transition-colors"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M5 10l7-7m0 0l7 7m-7-7v18"
-            />
-          </svg>
-        </button>
-      )}
+      </div>
     </div>
   );
-}
+};

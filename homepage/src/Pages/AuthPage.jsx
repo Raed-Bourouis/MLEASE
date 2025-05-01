@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   Eye,
   EyeOff,
@@ -8,52 +9,36 @@ import {
   Mail,
   AlertCircle,
 } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 
-// API URL for backend
-const API_URL = "http://localhost:5000/api";
-
-export default function AuthPage() {
-  const [isSignIn, setIsSignIn] = useState(true);
+export default function AuthPage({ isSignIn: propIsSignIn }) {
+  const location = useLocation();
+  const [isSignIn, setIsSignIn] = useState(
+    propIsSignIn ?? location.pathname === "/signin"
+  );
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
+  const navigate = useNavigate();
+  const { signin, signup, isLoading, isAuthenticated } = useAuth();
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/dashboard");
+    }
+  }, [isAuthenticated, navigate]);
 
   // Clear error when form changes
   useEffect(() => {
     setError("");
     setSuccess("");
   }, [isSignIn, email, password, name, username]);
-
-  // Check if user is already logged in
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      // Validate token on the server
-      fetch(`${API_URL}/protected`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-        .then((response) => {
-          if (response.ok) {
-            // Token is valid, redirect to dashboard
-            window.location.href = "/dashboard";
-          } else {
-            // Token is invalid, clear it
-            localStorage.removeItem("token");
-            localStorage.removeItem("user");
-          }
-        })
-        .catch((err) => {
-          console.error("Error validating token:", err);
-        });
-    }
-  }, []);
 
   const toggleForm = () => {
     setIsSignIn(!isSignIn);
@@ -63,11 +48,13 @@ export default function AuthPage() {
     setUsername("");
     setError("");
     setSuccess("");
+
+    // Update URL without reload
+    navigate(isSignIn ? "/signup" : "/signin", { replace: true });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
     setError("");
     setSuccess("");
 
@@ -78,33 +65,14 @@ export default function AuthPage() {
           throw new Error("Please enter your username and password");
         }
 
-        const response = await fetch(`${API_URL}/signin`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            username,
-            password,
-          }),
-        });
+        const result = await signin(username, password);
 
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.error || "Sign in failed");
+        if (result.success) {
+          setSuccess("Sign in successful! Redirecting...");
+          // Navigate happens automatically via the useEffect
+        } else {
+          setError(result.error);
         }
-
-        // Store user data and token
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
-
-        setSuccess("Sign in successful! Redirecting...");
-
-        // Redirect to dashboard
-        setTimeout(() => {
-          window.location.href = "/dashboard";
-        }, 1500);
       } else {
         // Sign Up logic
         if (!username || !email || !password || !name) {
@@ -115,41 +83,17 @@ export default function AuthPage() {
           throw new Error("Password must be at least 6 characters");
         }
 
-        const response = await fetch(`${API_URL}/signup`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            username,
-            email,
-            password,
-            // The backend doesn't specifically handle name, but we could modify it to do so
-            // For now we'll store it in the username field
-          }),
-        });
+        const result = await signup(username, email, password, name);
 
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.error || "Sign up failed");
+        if (result.success) {
+          setSuccess("Account created successfully! Redirecting...");
+          // Navigate happens automatically via the useEffect
+        } else {
+          setError(result.error);
         }
-
-        // Store user data and token
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
-
-        setSuccess("Account created successfully! Redirecting...");
-
-        // Redirect to dashboard
-        setTimeout(() => {
-          window.location.href = "/dashboard";
-        }, 1500);
       }
     } catch (err) {
       setError(err.message);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -223,7 +167,6 @@ export default function AuthPage() {
               </div>
             )}
 
-            {/* Username field - added for both sign in and sign up */}
             <div>
               <label
                 htmlFor="username"
@@ -254,7 +197,6 @@ export default function AuthPage() {
               </div>
             </div>
 
-            {/* Email field - only for sign up */}
             {!isSignIn && (
               <div>
                 <label

@@ -1,0 +1,16 @@
+artifact_uri: file:///C:/Users/User/Desktop/MLEASE/Backend/mlruns/0/e127b1a5dd8e46afa63f2a3a8348c8b0/artifacts
+deleted_time: 1745953860817
+end_time: 1745952333670
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: deleted
+run_id: e127b1a5dd8e46afa63f2a3a8348c8b0
+run_name: Preprocessing
+run_uuid: e127b1a5dd8e46afa63f2a3a8348c8b0
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1745952333601
+status: 3
+tags: []
+user_id: User

@@ -1,0 +1,16 @@
+artifact_uri: file:///C:/Users/User/Desktop/MLEASE/Backend/mlruns/0/97ef2ff77d9544ca8ecade75b925758f/artifacts
+deleted_time: 1745953860799
+end_time: 1745953014652
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: deleted
+run_id: 97ef2ff77d9544ca8ecade75b925758f
+run_name: EDA
+run_uuid: 97ef2ff77d9544ca8ecade75b925758f
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1745953010017
+status: 3
+tags: []
+user_id: User

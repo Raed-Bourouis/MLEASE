@@ -1,0 +1,16 @@
+artifact_uri: file:///C:/Users/User/Desktop/MLEASE/Backend/mlruns/0/17c786948c1b470e87af6bb0143d540f/artifacts
+deleted_time: 1745953860765
+end_time: 1745953540564
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: deleted
+run_id: 17c786948c1b470e87af6bb0143d540f
+run_name: ModelSelection
+run_uuid: 17c786948c1b470e87af6bb0143d540f
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1745953540464
+status: 3
+tags: []
+user_id: User

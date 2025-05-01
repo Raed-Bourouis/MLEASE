@@ -1,0 +1,16 @@
+artifact_uri: file:///C:/Users/User/Desktop/MLEASE/Backend/mlruns/0/ca0d51a6de5140a79235919e71bd090b/artifacts
+deleted_time: 1745953860760
+end_time: 1745953553202
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: deleted
+run_id: ca0d51a6de5140a79235919e71bd090b
+run_name: XGBoost_The_average_annual_payroll_of_the_region
+run_uuid: ca0d51a6de5140a79235919e71bd090b
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1745953540705
+status: 3
+tags: []
+user_id: User

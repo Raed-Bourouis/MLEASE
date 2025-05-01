@@ -1,0 +1,16 @@
+artifact_uri: file:///C:/Users/User/Desktop/MLEASE/Backend/mlruns/0/89614f43ac0440848d46bb7e002e29a3/artifacts
+deleted_time: 1745953860793
+end_time: 1745953024198
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: deleted
+run_id: 89614f43ac0440848d46bb7e002e29a3
+run_name: SARIMA_The_average_annual_payroll_of_the_region
+run_uuid: 89614f43ac0440848d46bb7e002e29a3
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1745953015454
+status: 3
+tags: []
+user_id: User

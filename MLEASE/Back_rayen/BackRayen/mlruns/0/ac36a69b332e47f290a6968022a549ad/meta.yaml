@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/User/Desktop/MLEASE/Backend/mlruns/0/ac36a69b332e47f290a6968022a549ad/artifacts
+end_time: 1745954274353
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: ac36a69b332e47f290a6968022a549ad
+run_name: XGBoost_Revenue
+run_uuid: ac36a69b332e47f290a6968022a549ad
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1745954260506
+status: 3
+tags: []
+user_id: User

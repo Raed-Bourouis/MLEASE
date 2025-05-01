@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/User/Desktop/MLEASE/Backend/mlruns/0/74152ab3063e46039c2f30fa2c1a23a3/artifacts
+end_time: 1745954378659
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 74152ab3063e46039c2f30fa2c1a23a3
+run_name: Training
+run_uuid: 74152ab3063e46039c2f30fa2c1a23a3
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1745954260444
+status: 4
+tags: []
+user_id: User

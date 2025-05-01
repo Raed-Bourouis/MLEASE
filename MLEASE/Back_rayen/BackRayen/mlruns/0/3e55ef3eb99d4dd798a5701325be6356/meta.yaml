@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/User/Desktop/MLEASE/Backend/mlruns/0/3e55ef3eb99d4dd798a5701325be6356/artifacts
+end_time: 1745954312797
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 3e55ef3eb99d4dd798a5701325be6356
+run_name: XGBoost_Average_cost
+run_uuid: 3e55ef3eb99d4dd798a5701325be6356
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1745954288250
+status: 3
+tags: []
+user_id: User

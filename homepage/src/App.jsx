@@ -1,13 +1,13 @@
 import { useState } from 'react'
-// import HomePage from './components/HomePage/HomePage.jsx'
 
-import HomePage from './components/Homepage/Homepage'
+import HomePage from './pages/Homepage'
+import AuthPage from './Pages/AuthPage'
 function App() {
   const [count, setCount] = useState(0)
 
   return (
     <>
-    <HomePage />
+    <AuthPage />
     </>
 
   )

@@ -1,4 +1,4 @@
-import mlease_logo from "../../assets/logo.svg";
+import mlease_logo from "../assets/logo.svg";
 const Navbar = () => {
   return (
     <nav className="flex justify-around items-center bg-[#FD9D65] py-4 px-6 md:px-12 lg:px-30 h-nav sticky top-0 w-full z-15">

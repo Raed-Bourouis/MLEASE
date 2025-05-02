@@ -11,7 +11,7 @@ import os
 import time
 
 
-def train_xgboost_model(csv_path, date_col, value_col, output_dir="xgboost_output"):
+def train_xgboost(csv_path, date_col, value_col, output_dir="./datasets/predictions/"):
     mlflow.set_experiment("mlease-training")
 
     df = pd.read_csv(csv_path, parse_dates=[date_col])
@@ -62,9 +62,9 @@ def train_xgboost_model(csv_path, date_col, value_col, output_dir="xgboost_outpu
 
 
 # Example usage:
-if __name__ == "__main__":
-    train_xgboost_model(
-        csv_path="../datasets/Miles_Traveled.csv",
-        date_col="DATE",
-        value_col="TRFVOLUSM227NFWA"
-    )
+# if __name__ == "__main__":
+#     train_xgboost_model(
+#         csv_path="./datasets/Miles_Traveled.csv",
+#         date_col="DATE",
+#         value_col="TRFVOLUSM227NFWA"
+#     )

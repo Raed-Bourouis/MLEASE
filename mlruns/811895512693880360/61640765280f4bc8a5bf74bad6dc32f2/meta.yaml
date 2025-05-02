@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/salou/OneDrive/Documents/GitHub/MLEASE/mlruns/811895512693880360/61640765280f4bc8a5bf74bad6dc32f2/artifacts
+end_time: 1745919920269
+entry_point_name: ''
+experiment_id: '811895512693880360'
+lifecycle_stage: active
+run_id: 61640765280f4bc8a5bf74bad6dc32f2
+run_name: nosy-lark-702
+run_uuid: 61640765280f4bc8a5bf74bad6dc32f2
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1745919916066
+status: 3
+tags: []
+user_id: salou

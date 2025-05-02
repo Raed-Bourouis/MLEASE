@@ -159,6 +159,6 @@ def log_eda(data_path):
         # End MLflow run
     print("EDA logging completed.")
 
-if __name__ == "__main__":
-    if __name__ == "__main__":
-        log_eda("../datasets/BeerWineLiquor.csv")
+# if __name__ == "__main__":
+#     if __name__ == "__main__":
+#         log_eda("../datasets/BeerWineLiquor.csv")

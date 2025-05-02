@@ -7,6 +7,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - .:/app
+      - ./datasets:/app/datasets
     ports:
       - "8888:8888"
     environment:
@@ -36,17 +37,15 @@ services:
     image: python:3.10-slim
     command: >
       sh -c "pip install mlflow &&
-             mlflow server 
-             --host 0.0.0.0 
-             --port 5000 
-             --backend-store-uri file:///mlflow_data/mlruns 
-             --default-artifact-root=file:///mlflow_data/artifacts"
+            mlflow server 
+            --host 0.0.0.0 
+            --port 5000 
+            --backend-store-uri file:///mlflow_data/mlruns 
+            --default-artifact-root file:///mlflow_data/artifacts"
     ports:
       - "5000:5000"
     volumes:
       - mlflow_data:/mlflow_data
-    environment:
-      - ARTIFACT_ROOT=/mlflow_data/artifacts
     networks:
       - mlease-net
     restart: unless-stopped

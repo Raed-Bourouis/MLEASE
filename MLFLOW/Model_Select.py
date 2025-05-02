@@ -581,5 +581,5 @@ def model_selection_pipeline(dataset_path, target_col=None, experiment_name="Mod
     print("✅ Model selection completed and logged in MLflow.")
 
 # Example usage:
-if __name__ == "__main__":
-    model_selection_pipeline("../datasets/energydata_complete.csv")
+# if __name__ == "__main__":
+#     model_selection_pipeline("../datasets/energydata_complete.csv")

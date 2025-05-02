@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/salou/OneDrive/Documents/GitHub/MLEASE/mlruns/811895512693880360/9fcb83714bf94832a578d55fb6556934/artifacts
+end_time: 1745919724413
+entry_point_name: ''
+experiment_id: '811895512693880360'
+lifecycle_stage: active
+run_id: 9fcb83714bf94832a578d55fb6556934
+run_name: serious-snipe-655
+run_uuid: 9fcb83714bf94832a578d55fb6556934
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1745919719538
+status: 3
+tags: []
+user_id: salou

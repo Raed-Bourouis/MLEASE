@@ -12,7 +12,7 @@ from tensorflow.keras.optimizers import Adam
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_percentage_error
 
-def train_lstm_pmodel(
+def train_lstm_(
     df: pd.DataFrame,
     experiment_name: str = "LSTM_Experiment",
     epochs: int = 200,

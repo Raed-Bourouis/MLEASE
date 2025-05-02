@@ -1,13 +1,12 @@
-# ensemble_combiner.py
-
 import pandas as pd
 import mlflow
 import os
 
-def combine_ensemble_predictions(models_list, output_path="../datasets/ensemble_predictions.csv"):
+def combine_ensemble_predictions(models_list, output_path="../datasets/predictions/ensemble_predictions.csv"):
     """
     Combine predictions from selected models using simple average.
-    
+    Automatically supports both monovariate and multivariate forecasts.
+
     Args:
         models_list (list): List of model names, e.g., ["Prophet", "Xgboost"]
         output_path (str): Path where to save the ensemble predictions.
@@ -16,42 +15,52 @@ def combine_ensemble_predictions(models_list, output_path="../datasets/ensemble_
 
     prediction_dataframes = []
 
+    model_to_file = {
+        "prophet": "../datasets/predictions/predictions_prophet.csv",
+        "xgboost": "../datasets/predictions/predictions_xgboost.csv",
+        "sarima": "../datasets/predictions/predictions_sarima.csv",
+        "lstm": "../datasets/predictions/predictions_lstm.csv"
+    }
+
     for model in models_list:
         model = model.lower()
         
-        if model == "prophet":
-            prediction_file = "../MLFLOW/predictions_prophet.csv"
-        elif model == "xgboost":
-            prediction_file = "../MLFLOW/predictions_xgboost.csv"
-        elif model == "sarima":
-            prediction_file = "../MLFLOW/predictions_sarima.csv"
-        elif model == "lstm":
-            prediction_file = "../MLFLOW/predictions_lstm.csv"
-        else:
+        if model not in model_to_file:
             raise ValueError(f"Unknown model {model} for ensembling.")
 
-        # Check if file exists
-        if not os.path.exists(prediction_file):
-            raise FileNotFoundError(f"Prediction file not found: {prediction_file}")
+        prediction_file = model_to_file[model]
 
-        # Load the predictions
+        # Check if file exists
+        if not os.path.isfile(prediction_file):
+            raise FileNotFoundError(f"❌ Prediction file not found: {prediction_file}")
+
+        # Load predictions
         df = pd.read_csv(prediction_file)
 
-        # Check the required column
-        if "yhat" not in df.columns:
-            raise ValueError(f"'yhat' column not found in {prediction_file}")
+        # Detect prediction columns automatically
+        pred_columns = [col for col in df.columns if col.startswith("yhat")]
 
-        prediction_dataframes.append(df["yhat"].values)
+        if not pred_columns:
+            raise ValueError(f"❌ No prediction columns ('yhat') found in {prediction_file}")
 
-    # Simple average of predictions
-    combined_predictions = sum(prediction_dataframes) / len(prediction_dataframes)
+        print(f"✅ Loaded predictions from {model}: {pred_columns}")
+        prediction_dataframes.append(df[pred_columns])
 
-    # Save combined predictions
-    ensemble_df = pd.DataFrame({
-        "yhat_ensemble": combined_predictions
-    })
+    if not prediction_dataframes:
+        raise ValueError("❌ No valid prediction files found to combine.")
 
-    ensemble_df.to_csv(output_path, index=False)
+    # --- Align all predictions by columns ---
+    all_predictions = pd.concat(prediction_dataframes, axis=1)
+
+    # Group by column names: for example, 'yhat_sales', 'yhat_traffic', etc.
+    grouped = all_predictions.groupby(level=0, axis=1)
+
+    # Average across models for each variable
+    ensemble_predictions = grouped.mean()
+
+    # Save
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    ensemble_predictions.to_csv(output_path, index=False)
     print(f"✅ Ensemble predictions saved to {output_path}")
 
     # Log to MLflow
@@ -62,6 +71,6 @@ def combine_ensemble_predictions(models_list, output_path="../datasets/ensemble_
     print("✅ Ensemble predictions logged to MLflow.")
 
 # Standalone usage
-if __name__ == "__main__":
-    example_models = ["Prophet", "Xgboost"]  # Example usage
-    combine_ensemble_predictions(example_models)
+# if __name__ == "__main__":
+#     example_models = ["Prophet", "Xgboost"] 
+#     combine_ensemble_predictions(example_models)

@@ -8,7 +8,7 @@ import mlflow.sklearn
 import time
 import os
 
-def train_prophet_model(csv_path, date_col, value_col, model_name="prophet_model", output_dir="prophet_output"):
+def train_prophet(csv_path, date_col, value_col, model_name="prophet_model", output_dir="./datasets/predictions/"):
     mlflow.set_experiment("mlease-training")
 
     # Load data
@@ -37,7 +37,7 @@ def train_prophet_model(csv_path, date_col, value_col, model_name="prophet_model
 
         # Save outputs
         os.makedirs(output_dir, exist_ok=True)
-        forecast_path = os.path.join(output_dir, "forecast.csv")
+        forecast_path = os.path.join(output_dir, "prophet_forecast.csv")
         model_path = os.path.join(output_dir, f"{model_name}.pkl")
 
         forecast.to_csv(forecast_path, index=False)
@@ -51,9 +51,9 @@ def train_prophet_model(csv_path, date_col, value_col, model_name="prophet_model
         print(f"[✓] Prophet training done. RMSE: {rmse:.4f}")
 
 # Example usage
-if __name__ == "__main__":
-    train_prophet_model(
-        csv_path="../datasets/Miles_Traveled.csv",
-        date_col="DATE",
-        value_col="TRFVOLUSM227NFWA"
-    )
+# if __name__ == "__main__":
+#     train_prophet_model(
+#         csv_path="./datasets/Miles_Traveled.csv",
+#         date_col="DATE",
+#         value_col="TRFVOLUSM227NFWA"
+#     )

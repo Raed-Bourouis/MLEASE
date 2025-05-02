@@ -8,7 +8,7 @@ from statsmodels.tsa.statespace.sarimax import SARIMAX
 from sklearn.metrics import mean_squared_error
 
 
-def train_sarima_model(csv_path, date_col, value_col, order, seasonal_order, output_dir="sarima_output"):
+def train_sarima(csv_path, date_col, value_col, order, seasonal_order, output_dir="./datasets/predictions/"):
     mlflow.set_experiment("mlease-training")
 
     df = pd.read_csv(csv_path, parse_dates=[date_col])
@@ -49,13 +49,13 @@ def train_sarima_model(csv_path, date_col, value_col, order, seasonal_order, out
 
         print(f"[SARIMA] RMSE: {rmse:.4f}")
         
-if __name__ == "__main__":
-    train_sarima_model(
-        csv_path="../datasets/Miles_Traveled.csv",
-        date_col="DATE",
-        value_col="TRFVOLUSM227NFWA",
-        order=(1, 1, 1),
-        seasonal_order=(1, 1, 1, 12)
-    )
+# if __name__ == "__main__":
+#     train_sarima_model(
+#         csv_path="./datasets/Miles_Traveled.csv",
+#         date_col="DATE",
+#         value_col="TRFVOLUSM227NFWA",
+#         order=(1, 1, 1),
+#         seasonal_order=(1, 1, 1, 12)
+#     )
 
 

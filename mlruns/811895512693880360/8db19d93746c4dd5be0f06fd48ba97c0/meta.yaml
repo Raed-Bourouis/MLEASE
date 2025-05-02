@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/salou/OneDrive/Documents/GitHub/MLEASE/mlruns/811895512693880360/8db19d93746c4dd5be0f06fd48ba97c0/artifacts
+end_time: 1745919825256
+entry_point_name: ''
+experiment_id: '811895512693880360'
+lifecycle_stage: active
+run_id: 8db19d93746c4dd5be0f06fd48ba97c0
+run_name: luxuriant-jay-114
+run_uuid: 8db19d93746c4dd5be0f06fd48ba97c0
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1745919823216
+status: 3
+tags: []
+user_id: salou

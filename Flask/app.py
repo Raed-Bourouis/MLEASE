@@ -231,20 +231,21 @@ def upload_csv():
     if file and file.filename.endswith(".csv"):
         try:
             # Save dataset to local storage
-            filename = secure_filename(file.filename)
-            uploaded_file_path = os.path.join("uploads", filename)
-            file.save(uploaded_file_path)
+            
             # log dataset to mlflow as artefact
             with mlflow.start_run() as run:
                 global run_id
                 df = pd.read_csv(file)
-                temp_path = os.path.join("temp", file.filename)
-                os.makedirs("temp", exist_ok=True)
+                filename = secure_filename(file.filename)
+                temp_path = os.path.join("temp/datasets/", filename)
+                os.makedirs("temp/datasets/", exist_ok=True)
+                print("temp path: ", temp_path)
+                print("filename: ", filename)
                 file.seek(0)
                 file.save(temp_path)
                 mlflow.log_artifact(temp_path, artifact_path="uploaded_data")
                 run_id=run.info.run_id
-                os.remove(temp_path)
+                # os.remove(temp_path)
 
             return jsonify(
                 {

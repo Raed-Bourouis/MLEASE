@@ -307,6 +307,118 @@ def run_eda():
         )
 
 
+
+
+@app.route("/run-preprocessing", methods=["POST"])
+def run_preprocessing():
+    try:
+        data = request.get_json()
+
+        data_path = data.get("data_path")
+        eda_report_path = data.get("eda_report_path")
+        output_processed_path = data.get(
+            "output_processed_path", "processed/preprocessed.csv"
+        )
+
+        if not data_path or not os.path.exists(data_path):
+            return (
+                jsonify(
+                    {"status": "error", "message": "Valid 'data_path' must be provided"}
+                ),
+                400,
+            )
+        if not eda_report_path or not os.path.exists(eda_report_path):
+            return (
+                jsonify(
+                    {
+                        "status": "error",
+                        "message": "Valid 'eda_report_path' must be provided",
+                    }
+                ),
+                400,
+            )
+
+        # Run the preprocessing task
+        processed_path = preprocess_task.run(
+            data_path, eda_report_path, output_processed_path
+        )
+
+        return (
+            jsonify({"status": "success", "processed_data_path": processed_path}),
+            200,
+        )
+
+    except Exception as e:
+        return (
+            jsonify({"status": "error", "message": f"Preprocessing failed: {str(e)}"}),
+            500,
+        )
+
+
+
+@app.route("/run-model-selection", methods=["POST"])
+def run_model_selection():
+    try:
+        data = request.get_json()
+        processed_data_path = data.get("processed_data_path")
+
+        if not processed_data_path or not os.path.exists(processed_data_path):
+            return (
+                jsonify(
+                    {
+                        "status": "error",
+                        "message": "Valid 'processed_data_path' must be provided",
+                    }
+                ),
+                400,
+            )
+
+        # Run model selection task
+        recommended_models = model_selection_task.run(
+            processed_data_path=processed_data_path
+        )
+
+        return (
+            jsonify({"status": "success", "recommended_models": recommended_models}),
+            200,
+        )
+
+    except Exception as e:
+        return (
+            jsonify(
+                {"status": "error", "message": f"Model selection task failed: {str(e)}"}
+            ),
+            500,
+        )
+
+
+
+@app.route("/run-training", methods=["POST"])
+def run_training():
+    try:
+        data = request.get_json()
+
+        processed_data_path = data.get("processed_data_path")
+        selected_models = data.get("selected_models", [])  # Defaults to SARIMA + Prophet in task
+
+        if not processed_data_path or not os.path.exists(processed_data_path):
+            return jsonify({"status": "error", "message": "Valid 'processed_data_path' must be provided"}), 400
+
+        # Run the training task
+        training_results = train_models_task.run(processed_data_path=processed_data_path, selected_models=selected_models)
+
+        return jsonify({
+            "status": "success",
+            "message": "Training completed",
+            "results": training_results
+        }), 200
+
+    except Exception as e:
+        return jsonify({
+            "status": "error",
+            "message": f"Training task failed: {str(e)}"
+        }), 500
+
 @app.route("/run-pipeline", methods=["POST"])
 def run_pipeline():
     try:
@@ -357,15 +469,15 @@ def run_pipeline():
         )
 
 
-@app.route("/forecast", methods=["POST"])
-def forecast():
-    data = request.get_json()
-    try:
-        # result = Backend.EDA.generate_mlops_report(data)  # this function should run your pipeline
-        result = "true"
-        return jsonify({"status": "success", "result": result})
-    except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 500
+# @app.route("/forecast", methods=["POST"])
+# def forecast():
+#     data = request.get_json()
+#     try:
+#         # result = Backend.EDA.generate_mlops_report(data)  # this function should run your pipeline
+#         result = "true"
+#         return jsonify({"status": "success", "result": result})
+#     except Exception as e:
+#         return jsonify({"status": "error", "message": str(e)}), 500
 
 
 # Initialize database when the app starts

@@ -18,6 +18,8 @@ import hashlib
 import secrets
 import jwt
 from datetime import datetime, timedelta
+from werkzeug.utils import secure_filename
+
 
 app = Flask(__name__)
 
@@ -228,18 +230,20 @@ def upload_csv():
 
     if file and file.filename.endswith(".csv"):
         try:
-            # Read the CSV file into a pandas DataFrame
-            with mlflow.start_run():
-
+            # Save dataset to local storage
+            filename = secure_filename(file.filename)
+            uploaded_file_path = os.path.join("uploads", filename)
+            file.save(uploaded_file_path)
+            # log dataset to mlflow as artefact
+            with mlflow.start_run() as run:
+                global run_id
                 df = pd.read_csv(file)
-
-                # Optional: process DataFrame
-                # result = your_pipeline_function(df)
                 temp_path = os.path.join("temp", file.filename)
                 os.makedirs("temp", exist_ok=True)
                 file.seek(0)
                 file.save(temp_path)
                 mlflow.log_artifact(temp_path, artifact_path="uploaded_data")
+                run_id=run.info.run_id
                 os.remove(temp_path)
 
             return jsonify(
@@ -247,6 +251,7 @@ def upload_csv():
                     "status": "success",
                     "columns": df.columns.tolist(),
                     "preview": df.head(5).to_dict(orient="records"),
+                    "Dataset_id": run_id,
                 }
             )
         except Exception as e:

@@ -7,7 +7,6 @@ sys.path.append(str(project_root))
 
 from flask import Flask, request, jsonify
 
-# import Backend.EDA  # example function
 import pandas as pd
 import mlflow
 
@@ -19,6 +18,8 @@ import secrets
 import jwt
 from datetime import datetime, timedelta
 from werkzeug.utils import secure_filename
+
+from BackRayen.pipeline import *
 
 
 app = Flask(__name__)
@@ -218,7 +219,7 @@ def home():
     return "MLEASE API is running!"
 
 
-@app.route("/upload-csv")
+@app.route("/upload-csv", methods=["POST"])
 def upload_csv():
     if "file" not in request.files:
         return jsonify({"status": "error", "message": "No file part in request"}), 400
@@ -231,12 +232,14 @@ def upload_csv():
     if file and file.filename.endswith(".csv"):
         try:
             # Save dataset to local storage
-            
+            filename = secure_filename(file.filename)
+            experiment_name = filename.removesuffix(".csv")
+            mlflow.set_experiment(experiment_name=experiment_name)
+
             # log dataset to mlflow as artefact
-            with mlflow.start_run() as run:
+            with mlflow.start_run(run_name="Shared Resources") as run:
                 global run_id
                 df = pd.read_csv(file)
-                filename = secure_filename(file.filename)
                 temp_path = os.path.join("temp/datasets/", filename)
                 os.makedirs("temp/datasets/", exist_ok=True)
                 print("temp path: ", temp_path)
@@ -244,21 +247,114 @@ def upload_csv():
                 file.seek(0)
                 file.save(temp_path)
                 mlflow.log_artifact(temp_path, artifact_path="uploaded_data")
-                run_id=run.info.run_id
+                run_id = run.info.run_id
                 # os.remove(temp_path)
 
             return jsonify(
                 {
                     "status": "success",
+                    "Dataset_id": run_id,
                     "columns": df.columns.tolist(),
                     "preview": df.head(5).to_dict(orient="records"),
-                    "Dataset_id": run_id,
-                }
+                },
+                201,
             )
         except Exception as e:
             return jsonify({"status": "error", "message": str(e)}), 500
     else:
         return jsonify({"status": "error", "message": "Invalid file type"}), 400
+
+
+@app.route("/run-eda", methods=["POST"])
+def run_eda():
+    try:
+        # Extract parameters from the request (JSON body)
+        data = request.get_json()
+
+        data_path = data.get("data_path")  # Path to the dataset (CSV)
+        output_report_path = data.get("output_report_path", "mlops_eda_report.json")
+
+        if not data_path or not os.path.exists(data_path):
+            return (
+                jsonify(
+                    {"status": "error", "message": "Valid 'data_path' must be provided"}
+                ),
+                400,
+            )
+
+        # Call the EDA task
+        eda_report_path = run_eda_task.run(
+            data_path=data_path, output_report_path=output_report_path
+        )
+
+        return (
+            jsonify(
+                {
+                    "status": "success",
+                    "message": "EDA task completed",
+                    "eda_report_path": eda_report_path,
+                }
+            ),
+            200,
+        )
+
+    except Exception as e:
+        return (
+            jsonify(
+                {"status": "error", "message": f"EDA task failed to execute: {str(e)}"}
+            ),
+            500,
+        )
+
+
+@app.route("/run-pipeline", methods=["POST"])
+def run_pipeline():
+    try:
+        # Extract parameters from the request (JSON body)
+        data = request.get_json()
+
+        data_path = data.get("data_path")  # Required
+        eda_report_path = data.get("eda_report_path", "mlops_eda_report.json")
+        processed_data_path = data.get(
+            "processed_data_path", "preprocessed_timeseries.csv"
+        )
+        selected_models = data.get("selected_models")  # Can be None
+
+        if not data_path or not os.path.exists(data_path):
+            return (
+                jsonify(
+                    {"status": "error", "message": "Valid 'data_path' must be provided"}
+                ),
+                400,
+            )
+
+        # Run the pipeline with parameters
+        flow_state = mlease_pipeline.run(
+            parameters={
+                "data_path": data_path,
+                "eda_report_path": eda_report_path,
+                "processed_data_path": processed_data_path,
+            }
+        )
+
+        return (
+            jsonify(
+                {
+                    "status": "success",
+                    "message": "Pipeline executed",
+                    "flow_state": str(flow_state),
+                }
+            ),
+            200,
+        )
+
+    except Exception as e:
+        return (
+            jsonify(
+                {"status": "error", "message": f"Pipeline failed to execute: {str(e)}"}
+            ),
+            500,
+        )
 
 
 @app.route("/forecast", methods=["POST"])

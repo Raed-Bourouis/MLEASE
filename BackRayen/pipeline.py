@@ -1,14 +1,13 @@
-import prefect
 from prefect import Flow, task, Parameter
 import pandas as pd
 import mlflow
-from EDA import run_eda
-from Preprocessing import TimeSeriesPreprocessor
-from ModelSelection import analyze_timeseries
-from Sarima import train_sarima
-from Prophet import train_prophet
-from Xgboost import train_xgboost
-from Lstm import train_lstm
+from .Preprocessing import TimeSeriesPreprocessor
+from .EDA import run_eda
+from .ModelSelection import analyze_timeseries
+from .Sarima import train_sarima
+from .Prophet import train_prophet
+from .Xgboost import train_xgboost
+from .Lstm import train_lstm
 
 # Définir les tâches Prefect
 @task
@@ -67,7 +66,7 @@ def train_models_task(processed_data_path: str, selected_models: list):
         return results
 
 # Définir le workflow Prefect
-with Flow("TimeSeriesPipeline") as flow:
+with Flow("TimeSeriesPipeline") as mlease_pipeline:
     # Paramètres configurables
     data_path = Parameter("data_path", default="../datasets/Miles_Traveled.csv")
     eda_report_path = Parameter("eda_report_path", default="mlops_eda_report.json")
@@ -89,4 +88,4 @@ with Flow("TimeSeriesPipeline") as flow:
 
 # Exécuter le pipeline
 if __name__ == "__main__":
-    flow.run()
+    mlease_pipeline.run()

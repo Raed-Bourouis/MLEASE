@@ -171,7 +171,7 @@ cython_debug/
 .pypirc
 
 #Flask environment
-Flask/mlartifacts
-Flask/mlruns
-Flask/temp
-Flask/users.db
+Flask
+mlruns/
+mlartifacts/
+!Flask/app.py

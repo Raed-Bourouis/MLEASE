@@ -19,6 +19,9 @@ import jwt
 from datetime import datetime, timedelta
 from werkzeug.utils import secure_filename
 
+import matplotlib
+matplotlib.use("Agg")
+
 from BackRayen.pipeline import *
 
 
@@ -316,9 +319,7 @@ def run_preprocessing():
 
         data_path = data.get("data_path")
         eda_report_path = data.get("eda_report_path")
-        output_processed_path = data.get(
-            "output_processed_path", "processed/preprocessed.csv"
-        )
+        output_processed_path = data.get("output_processed_path")
 
         if not data_path or not os.path.exists(data_path):
             return (
@@ -392,7 +393,6 @@ def run_model_selection():
         )
 
 
-
 @app.route("/run-training", methods=["POST"])
 def run_training():
     try:
@@ -406,11 +406,10 @@ def run_training():
 
         # Run the training task
         training_results = train_models_task.run(processed_data_path=processed_data_path, selected_models=selected_models)
-
+        print(type(training_results))
         return jsonify({
             "status": "success",
             "message": "Training completed",
-            "results": training_results
         }), 200
 
     except Exception as e:
@@ -485,3 +484,10 @@ init_db()
 
 if __name__ == "__main__":
     app.run(debug=True, port=8000)
+
+
+# TODO: Restructure the runs/experiments architecture as follow 
+'''
+--the full pipeline creates/enter an experiment holding the name of the dataset, then — in a run holding nested runs — finish each task
+--each individual task logs into the datasets experiment, then does its work in its own run.
+'''

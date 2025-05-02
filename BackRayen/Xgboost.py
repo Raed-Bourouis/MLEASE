@@ -10,33 +10,49 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score, m
 import optuna
 import mlflow
 
-def create_features(df, target_column, lags=3, rolling_windows=[]):
+def create_features(
+    df, target_column=None, lags=3, rolling_windows=[], test_size=0.2, random_state=42
+):
     df = df.copy()
-    feature_columns = [col for col in df.columns if col != target_column] if len(df.columns) > 1 else [target_column]
+    if target_column is None:
+        target_column = df.columns[-1]
     
+    feature_columns = [col for col in df.columns if col != target_column] if len(df.columns) > 1 else [target_column]
+
+    df["target_diff"] = df[target_column].diff()
+    df["target_pct_change"] = df[target_column].pct_change()
+
     for column in feature_columns:
         for lag in range(1, lags + 1):
             df[f"{column}_lag_{lag}"] = df[column].shift(lag)
-        
+            
         detected_freq = pd.infer_freq(df.index)
-        if detected_freq in ["D", "B"]:
+        print("***", detected_freq, "***")
+
+        rolling_windows = []
+        if detected_freq in ["D", "B"]:  # Quotidienne ou Business Days
             rolling_windows = [7, 14, 30]
-        elif detected_freq in ["MS", "M"]:
+        elif detected_freq in ["MS", "M"]:  # Mensuelle
             rolling_windows = [3, 6, 12]
-        elif detected_freq in ["YS", "Y"]:
+        elif detected_freq in ["YS", "Y"]:  # Annuelle
             rolling_windows = [2, 3, 5]
-        
+        else:
+            pass
+
+        # Appliquer les moyennes mobiles pour detecter la saisonnalité
         for window in rolling_windows:
             df[f"rolling_mean_{window}"] = df[column].rolling(window=window).mean()
             df[f"rolling_std_{window}"] = df[column].rolling(window=window).std()
-    
+
+        # Supprimer les valeurs NaN générées par les décalages
     df.dropna(inplace=True)
     X = df.drop(columns=[target_column], axis=1)
     y = df[target_column]
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42, shuffle=False
+        X, y, test_size=test_size, random_state=random_state, shuffle=False
     )
     return X_train, X_test, y_train, y_test
+
 
 def train_xgboost(df, target_column):
     mlflow.set_tracking_uri("http://127.0.0.1:5000")

@@ -275,7 +275,7 @@ def run_eda():
         data = request.get_json()
 
         data_path = data.get("data_path")  # Path to the dataset (CSV)
-        output_report_path = data.get("output_report_path", "mlops_eda_report.json")
+        output_report_path = data.get("output_report_path", "temp/eda/mlops_eda_report.json")
 
         if not data_path or not os.path.exists(data_path):
             return (
@@ -319,7 +319,7 @@ def run_preprocessing():
 
         data_path = data.get("data_path")
         eda_report_path = data.get("eda_report_path")
-        output_processed_path = data.get("output_processed_path")
+        output_processed_path = data.get("output_processed_path", "temp/processed/preprocessed_timeseries.csv")
 
         if not data_path or not os.path.exists(data_path):
             return (
@@ -340,12 +340,14 @@ def run_preprocessing():
             )
 
         # Run the preprocessing task
-        processed_path = preprocess_task.run(
+        processed_df = preprocess_task.run(
             data_path, eda_report_path, output_processed_path
         )
+        processed_df.to_csv(output_processed_path)
+
 
         return (
-            jsonify({"status": "success", "processed_data_path": processed_path}),
+            jsonify({"status": "success", "processed_data_path": output_processed_path}),
             200,
         )
 

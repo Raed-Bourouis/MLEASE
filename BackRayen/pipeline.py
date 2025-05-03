@@ -24,9 +24,8 @@ def preprocess_task(data_path: str, eda_report_path: str, output_processed_path:
         preprocessor = TimeSeriesPreprocessor(eda_report_path)
         df = pd.read_csv(data_path, parse_dates=True, index_col=0)
         df_processed = preprocessor.preprocess(df)
-        df_processed.to_csv(output_processed_path)
-        mlflow.log_artifact(data_path)
-    return output_processed_path
+        mlflow.log_artifact(output_processed_path)
+    return df_processed
 
 @task
 def model_selection_task(processed_data_path: str):
